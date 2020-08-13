@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration scan="true"><!-- 这个是根配置文件，一定要有的
+                            scan：
+                                是当配置文件被修改后会被重新加载
+                            scanPeriod:
+                                设置监测配置文件是否有修改的时间间隔，如果没有给出时间单位，
+                                默认单位是毫秒。当scan为true时，此属性生效。默认的时间间隔为1分钟。
+                            debug：
+                                当此属性设置为true时，将打印出logback内部日志信息，实时查看logback运行状态。
+                                默认值为false。
+                             -->
+
+    <!-- 彩色日志(IDE下载插件才可以生效) -->
+    <!-- 彩色日志依赖的渲染类 -->
+    <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter" />
+    <conversionRule conversionWord="wex" converterClass="org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter" />
+    <conversionRule conversionWord="wEx" converterClass="org.springframework.boot.logging.logback.ExtendedWhitespaceThrowableProxyConverter" />
+
+    <logger name="org.apache.catalina.util.LifecycleBase" level="ERROR"/>
+    <logger name="org.apache.coyote.http11.Http11NioProtocol" level="WARN"/>
+    <logger name="org.apache.tomcat.util.net.NioSelectorPool" level="WARN"/>
+    <logger name="org.hibernate.validator.internal.util.Version" level="WARN"/>
+    <logger name="org.mybatis.spring.mapper.*" level="INFO"/>
+    <logger name="com.yys.mapper" level="DEBUG"/>
+    <!-- 彩色日志格式 -->
+    <property name="CONSOLE_LOG_PATTERN" value="${CONSOLE_LOG_PATTERN:-%clr(%d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd HH:mm:ss.SSS}}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}}"/>
+    <property name="FILE_LOG_PATTERN" value="${FILE_LOG_PATTERN:-%d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd HH:mm:ss.SSS}} ${LOG_LEVEL_PATTERN:-%5p} ${PID:- } -&#45;&#45; [%t] %-40.40logger{39} : %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}}"/>
+
+    <!-- appender：
+        name相当于一个名称
+        class：确定要加载哪个类
+        encoder：一定要加 encoder ，
+        默认配置为PatternLayoutEncoder
+        patter：必填
+        ConsoleAppender：也明白是什么意思，就是输出在控制台上-->
+    <appender name="logFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 布局 -->
+        <encoder>
+            <Pattern>${FILE_LOG_PATTERN}</Pattern>
+        </encoder>
+        <file>${LOG_PATH}/hgtc.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${LOG_PATH}/hgtc.%d{yyyy-MM-dd}.log.zip</FileNamePattern>
+            <TotalSizeCap>5gbs</TotalSizeCap>
+            <MaxHistory>60</MaxHistory>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+         <MaxFileSize>100MB</MaxFileSize>
+       </triggeringPolicy>
+        <append>false</append>
+    </appender>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <Pattern>${CONSOLE_LOG_PATTERN}</Pattern>
+        </encoder>
+    </appender>
+
+    <root level="debug">
+        <appender-ref ref="logFile"/>
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yys.mapper.PrayMapper">
+    <resultMap id="BaseResultMap" type="com.yys.dao.Pray">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="fragment_id" jdbcType="INTEGER" property="fragmentId"/>
+        <result column="member_id" jdbcType="INTEGER" property="memberId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="fragment_type" jdbcType="LONGVARCHAR" property="fragmentType"/>
+    </resultMap>
+    <sql id="BaseColumn">
+    id,
+    member_id,
+    create_time,
+    update_time,
+    fragment_type
+  </sql>
+
+    <select id="matchWishFragment" resultMap="BaseResultMap">
+    SELECT * from pray WHERE
+    (SELECT a.own_fragment FROM pray a
+    LEFT JOIN member b
+    ON a.`member_id`= b.`id`
+    WHERE b.`yys_house_id` = (SELECT yys_house_id FROM member WHERE member_id = #{memberId}))
+    like %#{name}%
+  </select>
+
+    <select id="selectByCondition" parameterType="com.yys.request.PrayRequest"
+            resultType="com.yys.response.PrayResponse">
+    SELECT * FROM  pray p LEFT  JOIN  fragment f
+    ON
+    p.fragment_id = f.id
+    WHERE
+    f.grade = #{prayType}
+    and
+    p.fragment_type = #{fragmentType}
+    order by p.fragment_type desc ,p.create_time desc
+  </select>
+
+
+</mapper>
